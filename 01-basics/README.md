@@ -170,7 +170,7 @@ for key, val in user.items():
     print(f"{key}: {val}")
 
 # 字典推导式
-print({x: x**2 for x in range(5)})  # {0: 0, 1: 1, 2: 4, 3: 9, 4: 4}
+print({x: x**2 for x in range(5)})  # {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
 
 # 练习：单词频率
 text = "hello world hello python hello world"
@@ -443,6 +443,32 @@ print(math.floor(3.7))   # 3
 quotes = ["Keep it simple", "代码是写给人读的"]
 print(f"[{now:%H:%M}] {random.choice(quotes)}")
 ```
+
+---
+
+### Day 14 — 项目复盘 + 依赖管理
+
+```python
+# 生成 requirements.txt
+# 终端运行：pip freeze > requirements.txt
+# 安装依赖：pip install -r requirements.txt
+
+# day1_venv.py（新建）
+# 演示 requirements.txt 格式
+requirements_example = """
+# 生产依赖
+fastapi==0.110.0
+uvicorn==0.27.0
+
+# 开发依赖（保存在 requirements-dev.txt）
+pytest==8.0.0
+"""
+print("pip freeze > requirements.txt  # 导出当前环境依赖")
+print("pip install -r requirements.txt  # 安装依赖")
+```
+
+**关键概念**：`pip freeze`、`requirements.txt`、虚拟环境隔离
+**周末项目**：完善 CLI Todo 项目，添加分类和搜索功能（基于已有的 todo.py）
 
 ---
 

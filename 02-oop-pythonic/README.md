@@ -201,7 +201,15 @@ class Status(Enum):
 class Todo:
     title: str
     status: Status = Status.PENDING
-    created_at: datetime = field(default_factory=datetime.now)
+    tags: list = None
+    created_at: datetime = None
+
+    def __post_init__(self):
+        """__init__ 后自动调用，适合做校验和默认值"""
+        if self.tags is None:
+            self.tags = []
+        if self.created_at is None:
+            self.created_at = datetime.now()
 
     def complete(self):
         self.status = Status.DONE
@@ -296,7 +304,7 @@ from functools import wraps
 def log_call(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        print(f"→ {func.__name__}({args})")
+        print(f"[LOG] 调用 {func.__name__}({args}, {kwargs})")
         return func(*args, **kwargs)
     return wrapper
 
@@ -305,7 +313,7 @@ def add(a, b):
     return a + b
 
 print(add(3, 4))
-# → add((3, 4), {})
+# [LOG] 调用 add((3, 4), {})
 # 7
 ```
 
@@ -364,4 +372,20 @@ def process(data: List[int]) -> Dict[str, float]:
 
 # 运行 mypy 检查
 # pip install mypy && mypy day27_typing.py
+```
+
+---
+
+### Day 28 — 周项目：Todo Class 重构
+
+回顾 `project-todo-class/todo_manager.py`，确保理解：
+- `@dataclass` + `Enum` 替代手写 class
+- `__post_init__` 做字段校验
+- `@property` 替代 getter 方法
+- JSON 序列化/反序列化（`asdict` + `isoformat`）
+
+**挑战任务**：
+1. 添加 `@timer` 装饰器测量每个操作耗时
+2. 用 `contextlib.contextmanager` 实现自动保存的上下文
+3. 为项目添加 `requirements.txt`
 ```

@@ -13,14 +13,16 @@
 │   ├── day73_auth_dependency.py
 │   ├── day74_permissions.py
 │   ├── day75_refresh_token.py
-│   └── day76_logging.py
+│   ├── day76_logging.py
+│   └── day77_cicd.md
 ├── week12-deploy/code/
 │   ├── day78_frontend_integration.md
+│   ├── day79_graduation_project.md
 │   ├── day80_dockerfile
 │   ├── day81_render_deploy.md
 │   └── day82_cors_prod.py
-└── project-graduation/
-    └── (你的毕业项目)
+├── project-graduation/
+│   └── README.md
 ```
 
 ## 第 11 周：用户认证
@@ -171,6 +173,36 @@ logger.error("数据库连接失败")
 
 ---
 
+### Day 77 — CI/CD（GitHub Actions）
+
+**目标**：自动化测试 + 自动化部署
+
+```yaml
+# .github/workflows/test.yml
+name: Test
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: pip install pytest
+      - run: pytest
+```
+
+**关键概念**：
+- GitHub Actions = 前端的 GitHub Actions 一样，YAML 配置
+- `on: [push, pull_request]` — 触发条件
+- `matrix` — 多 Python 版本并行测试
+
+详见 `code/day77_cicd.md`
+
+---
+
 ## 第 12 周：部署
 
 ### Day 80 — Docker
@@ -219,6 +251,32 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 ```
+
+---
+
+### Day 83 — 项目综合回顾
+
+回顾整个课程的知识体系：
+
+| 阶段 | 核心技能 | 产出 |
+|------|---------|------|
+| 1-2 | Python 语法、脚本、CLI | CLI Todo |
+| 3-4 | OOP、Pythonic、装饰器 | Todo Class |
+| 5-6 | 生成器、异步 | 异步下载器 |
+| 7-8 | FastAPI、REST | Todo API |
+| 9-10 | SQLAlchemy、数据库 | Todo DB |
+| 11-12 | 认证、部署、CI/CD | 毕业项目 |
+
+**能力自检清单**：
+- [ ] 能独立用 Python 写脚本
+- [ ] 能设计 class 并使用 dataclass/enum
+- [ ] 能写装饰器和上下文管理器
+- [ ] 能编写异步代码
+- [ ] 能搭建 FastAPI 应用
+- [ ] 能用 SQLAlchemy 操作数据库
+- [ ] 能实现 JWT 认证
+- [ ] 能配置 CI/CD
+- [ ] 能 Docker 部署
 
 ---
 

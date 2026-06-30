@@ -15,7 +15,8 @@
 │       ├── day46_responses.py
 │       ├── day47_dependencies.py
 │       ├── day48_cors.py
-│       └── main.py
+│       ├── day49_main.py        # 完整 Todo API（内存版）
+│       └── day50_rest_design.md # REST 设计原则
 ├── week8-fastapi-advanced/
 │   └── code/
 │       ├── day50_routers/
@@ -26,7 +27,9 @@
 │       ├── day52_validation.py
 │       ├── day53_upload.py
 │       ├── day54_middleware.py
-│       └── day55_background.py
+│       ├── day55_background.py
+│       ├── day56_testing.py        # TestClient 测试
+│       └── test_todo_api.py        # 独立测试文件
 └── project-todo-api/
     └── app/
         ├── __init__.py
@@ -251,6 +254,31 @@ def delete_todo(todo_id: int):
 
 ---
 
+### Day 50 — REST API 设计原则（理论）
+
+**RESTful 核心原则**：
+
+| 原则 | 说明 |
+|------|------|
+| 资源路径 | `/todos` 而不是 `/getTodos` |
+| HTTP 动词 | GET=查, POST=增, PUT/PATCH=改, DELETE=删 |
+| 状态码 | 201=创建成功, 204=删除成功, 400=参数错误 |
+| 版本化 | `/v1/todos` 或 Header 版本控制 |
+
+**URL 设计示例**：
+```
+GET    /todos          # 列表
+POST   /todos          # 创建
+GET    /todos/{id}     # 详情
+PUT    /todos/{id}     # 全量更新
+PATCH  /todos/{id}    # 局部更新
+DELETE /todos/{id}    # 删除
+```
+
+**对比前端**：REST = 前后端约定的接口规范，类似 GraphQL 但更简单
+
+---
+
 ## 第 8 周：FastAPI 进阶
 
 ### Day 50 — APIRouter
@@ -373,4 +401,32 @@ def send_welcome_email(email: str):
 def register(name: str, email: str, bg: BackgroundTasks):
     bg.add_task(send_welcome_email, email)
     return {"message": "注册成功"}
+
+---
+
+### Day 56 — API 测试（TestClient）
+
+```python
+# day56_testing.py
+from fastapi.testclient import TestClient
+from day56_testing import app
+
+client = TestClient(app)
+
+def test_list_todos_empty():
+    response = client.get("/todos")
+    assert response.status_code == 200
+    assert response.json() == []
+
+def test_create_todo():
+    response = client.post("/todos", json={"title": "Buy milk"})
+    assert response.status_code == 201
+    assert response.json()["title"] == "Buy milk"
+
+# 运行：pytest day56_testing.py -v
+```
+
+**对比 Jest**：TestClient = 前端的 supertest，无需启动服务器即可测试 API。
+
+详见 `code/day56_testing.py`（完整 CRUD 测试）和 `code/test_todo_api.py`（测试文件分离实践）
 ```

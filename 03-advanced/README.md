@@ -219,6 +219,17 @@ def test_even_squares():
 # 运行：pytest test_todo.py -v
 ```
 
+**进阶用法**：
+
+```python
+# conftest.py 共享 fixture
+# test_advanced.py — fixture + parametrize
+
+# 运行：pytest test_advanced.py -v
+```
+
+详见 `code/day35_pytest/test_advanced.py` 和 `code/day35_pytest/conftest.py`
+
 ---
 
 ## 第 6 周：异步编程
@@ -376,6 +387,22 @@ asyncio.run(main())
 
 见 `day41_compare_js.md`
 
-### Day 42 — 周项目：异步图片下载器
+### Day 42 — 周项目：异步下载器
 
 见 `project-async-downloader/downloader.py`
+
+```bash
+# 安装依赖
+pip install aiohttp
+
+# 运行
+python project-async-downloader/downloader.py
+```
+
+**项目要求**：
+1. 用 `aiohttp` 并发下载多个文件
+2. 用 `asyncio.Queue` + 多 worker 控制并发数
+3. 显示下载进度和耗时
+4. 异常重试（参考 Day 26 retry 装饰器）
+
+**vs JS 对比**：Python 的 `asyncio.gather` = `Promise.all`，`asyncio.Queue` = 自定义并发池

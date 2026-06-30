@@ -305,6 +305,38 @@ def list_todos(db: Session = Depends(get_db)):
     return db.query(TodoModel).all()
 ```
 
+### Day 65 — Repository 模式
+
+将数据库查询逻辑从路由中抽离到 Repository 类，使代码更可测试、可维护。
+
+```python
+# day65_repository.py（代码文件已存在）
+class TodoRepository:
+    """封装对 Todo 表的所有数据库操作"""
+    def __init__(self, db: Session):
+        self.db = db
+
+    def get_all(self) -> list[Todo]:
+        return self.db.query(Todo).all()
+
+    def get_by_id(self, todo_id: int) -> Todo | None:
+        return self.db.query(Todo).filter(Todo.id == todo_id).first()
+
+    def create(self, data: TodoCreate) -> Todo:
+        todo = Todo(**data.model_dump())
+        self.db.add(todo)
+        self.db.commit()
+        self.db.refresh(todo)
+        return todo
+
+# 路由中只需一行：
+@app.get("/todos")
+def list_todos(db: Session = Depends(get_db)):
+    return TodoRepository(db).get_all()
+```
+
+**优势**：路由只关心 HTTP 语义，数据库逻辑集中在 Repository；单元测试时可 mock repository。
+
 ### Day 66 — 分页查询
 
 ```python
@@ -379,4 +411,30 @@ print(settings.database_url)  # 从 .env 或默认值
 # .env
 DATABASE_URL=sqlite:///prod.db
 DEBUG=false
+```
+
+---
+
+### Day 70 — 周项目：Todo 数据库版完善
+
+将 `project-todo-db/` 项目功能补全：
+
+1. **添加分类过滤** — 使用 `filter` 查询参数
+2. **添加分页** — `skip` / `limit` 参数
+3. **搜索功能** — 使用 `title.contains()`
+4. **添加 Alembic 迁移** — 初始化并创建第一个迁移
+5. **添加 Repository 模式** — 参考 Day 65
+
+**验证**：运行 `pytest` 测试所有 API 端点
+
+**项目结构**：
+```
+project-todo-db/app/
+├── main.py          # FastAPI 路由
+├── database.py      # 数据库连接
+├── models.py        # ORM 模型
+├── schemas.py       # Pydantic 模型
+├── crud.py          # Repository 模式
+└── repository.py    # 可选，参考 day65
+```
 ```
